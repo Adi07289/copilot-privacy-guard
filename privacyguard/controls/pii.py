@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from collections import Counter
 from dataclasses import dataclass
+from functools import lru_cache
 from typing import Callable
 from privacyguard.controls.base import Control
 from privacyguard.corpus import indian_pii as ip
@@ -48,17 +49,21 @@ _HONORIFIC = re.compile(r"\b(?:Mr|Ms|Mrs|Dr|Shri|Smt)\.?\s+([A-Z][a-z]+(?:\s+[A-
 _LABELLED = re.compile(r"(?:Name|From|Reported by|Employee|Contact person)\s*:\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2})")
 
 
+@lru_cache(maxsize=1)
+def _load_spacy():
+    """spaCy is optional; the model is loaded once per process."""
+    try:
+        import spacy
+        return spacy.load("en_core_web_sm", disable=["parser", "lemmatizer"])
+    except Exception:
+        return None
+
+
 class PIIDetector:
     def __init__(self, registry: RecognizerRegistry | None = None):
         self.registry = registry or RecognizerRegistry.default()
-        self._nlp = None
-        self.names_mode = "heuristic"
-        try:
-            import spacy  # optional
-            self._nlp = spacy.load("en_core_web_sm")
-            self.names_mode = "spacy"
-        except Exception:
-            self._nlp = None
+        self._nlp = _load_spacy()
+        self.names_mode = "spacy" if self._nlp is not None else "heuristic"
 
     def _persons(self, text: str) -> list[PIISpan]:
         spans = []
