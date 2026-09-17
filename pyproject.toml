@@ -1,0 +1,23 @@
+[project]
+name = "copilot-privacy-guard"
+version = "0.1.0"
+description = "Privacy-guard middleware prototype for retrieval-augmented enterprise LLM assistants (DPDP-aligned)"
+requires-python = ">=3.11"
+dependencies = [
+  "faker>=30",
+  "scikit-learn>=1.5",
+  "numpy>=1.26",
+  "openai>=1.40",
+  "streamlit>=1.38",
+  "python-dotenv>=1.0",
+]
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+ner = ["spacy>=3.7"]
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+[tool.setuptools.packages.find]
+include = ["privacyguard*"]
+[tool.pytest.ini_options]
+testpaths = ["tests"]
