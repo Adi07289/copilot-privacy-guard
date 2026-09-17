@@ -67,7 +67,7 @@ def _email_doc(i, fake, rng) -> Document:
         b.add("Reimbursement to UPI "); b.pii(ip.generate_upi(rng, sender), "UPI_VPA"); b.add(". ")
     if rng.random() < 0.3:
         b.add("Vendor PAN for invoicing: "); b.pii(ip.generate_pan(rng), "PAN"); b.add(". ")
-    b.add(f"\nRegards,\n{sender.split()[0]}")
+    b.add("\nRegards,\n"); b.pii(sender.split()[0], "PERSON")
     sens = rng.choice([0, 1, 1, 2])
     return Document(id=f"email-{i:03d}", kind="email", department=dept, sensitivity=sens,
                     purposes=[_PURPOSE_FOR_DEPT[dept], "general"] if sens <= 1 else [_PURPOSE_FOR_DEPT[dept]],
