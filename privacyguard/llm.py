@@ -23,6 +23,9 @@ _STOP = {"the", "and", "for", "are", "was", "were", "what", "when", "which", "wh
          "into", "our", "their", "them", "they", "his", "her", "its", "not", "but", "list", "give", "show", "tell"}
 
 
+_WRAPPER = re.compile(r"</?untrusted_document[^>]*>")
+
+
 class ExtractiveProvider:
     name = "extractive"
 
@@ -30,6 +33,7 @@ class ExtractiveProvider:
         terms = {t for t in re.findall(r"[a-z0-9]+", query.lower()) if len(t) > 2 and t not in _STOP}
         sents = []
         for c in context:
+            c = _WRAPPER.sub("", c)                       # delimiters are for the LLM, not the reader
             for s in re.split(r"(?<=[.!?\n])\s+", c):
                 s = s.strip()
                 if s:

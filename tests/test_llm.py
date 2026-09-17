@@ -26,3 +26,7 @@ def test_get_provider_without_key_is_extractive(monkeypatch):
     monkeypatch.setenv("LLM_PROVIDER", "groq")
     p = get_provider()
     assert p.name == "extractive"
+
+def test_extractive_strips_untrusted_wrapper():
+    out = ExtractiveProvider().answer("kubernetes upgrade", ['<untrusted_document id="d1">\nKubernetes upgrade is Friday.\n</untrusted_document>'])
+    assert "untrusted_document" not in out and "Kubernetes upgrade" in out

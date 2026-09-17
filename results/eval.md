@@ -10,7 +10,7 @@ Queries: 20 · Provider: `extractive` · Name detection: `spacy`
 | Redaction precision | — | 92.9% | higher | measured |
 | Redaction recall | — | 95.9% | higher | measured |
 | Answer-quality retention | — | — | higher | next stage |
-| Added latency (ms) | 0 | 22.46 ms | lower | measured |
+| Added latency (ms) | 0 | 22.0 ms | lower | measured |
 
 ## Per-query
 

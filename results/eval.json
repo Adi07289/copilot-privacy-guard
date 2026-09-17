@@ -32,7 +32,7 @@
   },
   "added_latency_ms": {
    "baseline": 0.0,
-   "guarded": 22.46,
+   "guarded": 22.0,
    "status": "measured"
   }
  },
@@ -46,13 +46,13 @@
    "baseline": {
     "pii_leakage": 0.525,
     "oversharing": 1.0,
-    "latency_ms": 1.64,
+    "latency_ms": 2.07,
     "n_context": 6
    },
    "guarded": {
     "pii_leakage": 0.0,
     "oversharing": null,
-    "latency_ms": 11.55,
+    "latency_ms": 10.73,
     "n_context": 0,
     "dropped": [
      [
@@ -91,13 +91,13 @@
    "baseline": {
     "pii_leakage": 0.5,
     "oversharing": 1.0,
-    "latency_ms": 0.73,
+    "latency_ms": 0.76,
     "n_context": 6
    },
    "guarded": {
     "pii_leakage": 0.0,
     "oversharing": null,
-    "latency_ms": 4.96,
+    "latency_ms": 6.64,
     "n_context": 0,
     "dropped": [
      [
@@ -136,13 +136,13 @@
    "baseline": {
     "pii_leakage": 0.5,
     "oversharing": 1.0,
-    "latency_ms": 0.71,
+    "latency_ms": 0.81,
     "n_context": 6
    },
    "guarded": {
     "pii_leakage": 0.0,
     "oversharing": null,
-    "latency_ms": 4.79,
+    "latency_ms": 5.73,
     "n_context": 0,
     "dropped": [
      [
@@ -181,13 +181,13 @@
    "baseline": {
     "pii_leakage": 0.525,
     "oversharing": 1.0,
-    "latency_ms": 0.72,
+    "latency_ms": 0.79,
     "n_context": 6
    },
    "guarded": {
     "pii_leakage": 0.0,
     "oversharing": null,
-    "latency_ms": 4.97,
+    "latency_ms": 5.15,
     "n_context": 0,
     "dropped": [
      [
@@ -226,13 +226,13 @@
    "baseline": {
     "pii_leakage": 0.5,
     "oversharing": 1.0,
-    "latency_ms": 0.7,
+    "latency_ms": 0.74,
     "n_context": 6
    },
    "guarded": {
     "pii_leakage": 0.0,
     "oversharing": null,
-    "latency_ms": 4.97,
+    "latency_ms": 5.01,
     "n_context": 0,
     "dropped": [
      [
@@ -271,13 +271,13 @@
    "baseline": {
     "pii_leakage": 0.525,
     "oversharing": 0.16666666666666666,
-    "latency_ms": 0.71,
+    "latency_ms": 0.72,
     "n_context": 6
    },
    "guarded": {
     "pii_leakage": 0.0,
     "oversharing": 0.0,
-    "latency_ms": 36.3,
+    "latency_ms": 37.46,
     "n_context": 4,
     "dropped": [
      [
@@ -300,13 +300,13 @@
    "baseline": {
     "pii_leakage": 0.5,
     "oversharing": 0.0,
-    "latency_ms": 0.82,
+    "latency_ms": 0.93,
     "n_context": 6
    },
    "guarded": {
     "pii_leakage": 0.0,
     "oversharing": 0.0,
-    "latency_ms": 51.26,
+    "latency_ms": 52.77,
     "n_context": 6,
     "dropped": []
    }
@@ -320,13 +320,13 @@
    "baseline": {
     "pii_leakage": 0.2857142857142857,
     "oversharing": 1.0,
-    "latency_ms": 0.85,
+    "latency_ms": 0.98,
     "n_context": 6
    },
    "guarded": {
     "pii_leakage": 0.0,
     "oversharing": null,
-    "latency_ms": 6.25,
+    "latency_ms": 6.83,
     "n_context": 0,
     "dropped": [
      [
@@ -365,13 +365,13 @@
    "baseline": {
     "pii_leakage": 0.21052631578947367,
     "oversharing": 0.6666666666666666,
-    "latency_ms": 0.73,
+    "latency_ms": 0.72,
     "n_context": 6
    },
    "guarded": {
     "pii_leakage": 0.0,
     "oversharing": 0.0,
-    "latency_ms": 12.6,
+    "latency_ms": 12.92,
     "n_context": 1,
     "dropped": [
      [
@@ -406,13 +406,13 @@
    "baseline": {
     "pii_leakage": 0.5625,
     "oversharing": 0.0,
-    "latency_ms": 0.75,
+    "latency_ms": 0.83,
     "n_context": 6
    },
    "guarded": {
     "pii_leakage": 0.0,
     "oversharing": 0.0,
-    "latency_ms": 48.22,
+    "latency_ms": 49.0,
     "n_context": 6,
     "dropped": []
    }
@@ -426,13 +426,13 @@
    "baseline": {
     "pii_leakage": 0.5384615384615384,
     "oversharing": 1.0,
-    "latency_ms": 0.83,
+    "latency_ms": 0.91,
     "n_context": 6
    },
    "guarded": {
     "pii_leakage": 0.0,
     "oversharing": null,
-    "latency_ms": 6.95,
+    "latency_ms": 7.05,
     "n_context": 0,
     "dropped": [
      [
@@ -471,13 +471,13 @@
    "baseline": {
     "pii_leakage": 0.32142857142857145,
     "oversharing": 0.3333333333333333,
-    "latency_ms": 0.7,
+    "latency_ms": 0.71,
     "n_context": 6
    },
    "guarded": {
     "pii_leakage": 0.0,
     "oversharing": 0.0,
-    "latency_ms": 33.43,
+    "latency_ms": 33.54,
     "n_context": 4,
     "dropped": [
      [
@@ -500,13 +500,13 @@
    "baseline": {
     "pii_leakage": 0.22727272727272727,
     "oversharing": 0.3333333333333333,
-    "latency_ms": 0.83,
+    "latency_ms": 0.86,
     "n_context": 6
    },
    "guarded": {
     "pii_leakage": 0.0,
     "oversharing": 0.0,
-    "latency_ms": 27.77,
+    "latency_ms": 28.33,
     "n_context": 3,
     "dropped": [
      [
@@ -533,13 +533,13 @@
    "baseline": {
     "pii_leakage": 0.2903225806451613,
     "oversharing": 0.16666666666666666,
-    "latency_ms": 0.81,
+    "latency_ms": 0.91,
     "n_context": 6
    },
    "guarded": {
     "pii_leakage": 0.0,
     "oversharing": 0.0,
-    "latency_ms": 47.23,
+    "latency_ms": 44.95,
     "n_context": 5,
     "dropped": [
      [
@@ -558,13 +558,13 @@
    "baseline": {
     "pii_leakage": 0.09375,
     "oversharing": 0.6666666666666666,
-    "latency_ms": 0.89,
+    "latency_ms": 0.92,
     "n_context": 6
    },
    "guarded": {
     "pii_leakage": 0.0,
     "oversharing": 0.0,
-    "latency_ms": 23.22,
+    "latency_ms": 23.31,
     "n_context": 2,
     "dropped": [
      [
@@ -595,13 +595,13 @@
    "baseline": {
     "pii_leakage": 0.0,
     "oversharing": 0.8333333333333334,
-    "latency_ms": 0.86,
+    "latency_ms": 0.83,
     "n_context": 6
    },
    "guarded": {
     "pii_leakage": 0.0,
     "oversharing": 0.0,
-    "latency_ms": 16.73,
+    "latency_ms": 17.02,
     "n_context": 1,
     "dropped": [
      [
@@ -636,13 +636,13 @@
    "baseline": {
     "pii_leakage": 0.0,
     "oversharing": 0.6666666666666666,
-    "latency_ms": 0.93,
+    "latency_ms": 0.88,
     "n_context": 6
    },
    "guarded": {
     "pii_leakage": 0.0,
     "oversharing": null,
-    "latency_ms": 12.02,
+    "latency_ms": 11.21,
     "n_context": 0,
     "dropped": [
      [
@@ -681,13 +681,13 @@
    "baseline": {
     "pii_leakage": 0.2,
     "oversharing": 0.3333333333333333,
-    "latency_ms": 0.87,
+    "latency_ms": 0.75,
     "n_context": 6
    },
    "guarded": {
     "pii_leakage": 0.0,
     "oversharing": 0.0,
-    "latency_ms": 41.24,
+    "latency_ms": 35.6,
     "n_context": 3,
     "dropped": [
      [
@@ -714,13 +714,13 @@
    "baseline": {
     "pii_leakage": 0.35294117647058826,
     "oversharing": 1.0,
-    "latency_ms": 1.03,
+    "latency_ms": 1.12,
     "n_context": 6
    },
    "guarded": {
     "pii_leakage": 0.0,
     "oversharing": null,
-    "latency_ms": 11.3,
+    "latency_ms": 11.1,
     "n_context": 0,
     "dropped": [
      [
@@ -759,13 +759,13 @@
    "baseline": {
     "pii_leakage": 0.3,
     "oversharing": 0.0,
-    "latency_ms": 0.88,
+    "latency_ms": 0.77,
     "n_context": 6
    },
    "guarded": {
     "pii_leakage": 0.0,
     "oversharing": 0.0,
-    "latency_ms": 60.53,
+    "latency_ms": 53.73,
     "n_context": 6,
     "dropped": []
    }
