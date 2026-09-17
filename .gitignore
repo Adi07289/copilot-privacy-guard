@@ -7,3 +7,4 @@ data/audit.jsonl
 .streamlit/
 *.egg-info/
 .gstack/
+.DS_Store
