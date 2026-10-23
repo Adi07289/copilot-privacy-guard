@@ -45,10 +45,10 @@ class RecognizerRegistry:
         ])
 
 
-_HONORIFIC = re.compile(r"\b(?:Mr|Ms|Mrs|Dr|Shri|Smt)\.?\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,2})")
+_HONORIFIC = re.compile(r"\b(?:Mr|Ms|Mrs|Dr|Shri|Smt)\.?[ \t]+([A-Z][a-z]+(?:[ \t]+[A-Z][a-z]+){0,2})")
 _SIGNOFF = re.compile(r"(?:Regards|Best regards|Kind regards|Warm regards|Thanks|Thank you|Cheers|Sincerely|Best),?"
                       r"[ \t]*\n[ \t]*([A-Z][a-z]+(?:[ \t]+[A-Z][a-z]+)?)[ \t]*(?=\n|$)")
-_LABELLED = re.compile(r"(?:Name|From|Reported by|Employee|Contact person)\s*:\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2})")
+_LABELLED = re.compile(r"(?:Name|From|Reported by|Employee|Contact person)[ \t]*:[ \t]*([A-Z][a-z]+(?:[ \t]+[A-Z][a-z]+){1,2})")
 
 
 @lru_cache(maxsize=1)

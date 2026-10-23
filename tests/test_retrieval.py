@@ -48,3 +48,10 @@ def test_dense_index_with_injected_embedder(mini_corpus):
 def test_build_indexes_dense_kind(mini_corpus):
     idx = build_indexes(mini_corpus, PIIRedactor(), kinds=("tfidf", "dense"), dense_embedder=_fake_embed)
     assert set(idx) == {"tfidf:raw", "tfidf:redacted", "dense:raw", "dense:redacted"}
+
+def test_body_detected_values_are_also_redacted_in_the_title():
+    from privacyguard.models import Document
+    d = Document(id="hr-x", kind="hr", department="HR", sensitivity=3, purposes=["hr_operations"],
+                 title="HR record Neel Sathe", text="EMPLOYEE RECORD\nName: Neel Sathe\nEmployee ID: EMP1")
+    r = redact_documents([d], PIIRedactor())[0]
+    assert "Neel Sathe" not in r.title and "Neel Sathe" not in r.text

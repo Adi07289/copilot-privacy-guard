@@ -85,11 +85,18 @@ class DenseIndex:
         return [Chunk.from_document(self._docs[i], float(sims[i])) for i in order]
 
 
+def _apply_mapping(s: str, mapping: dict[str, str]) -> str:
+    for placeholder, value in sorted(mapping.items(), key=lambda kv: -len(kv[1])):
+        s = s.replace(value, placeholder)
+    return s
+
+
 def redact_documents(docs: list[Document], redactor) -> list[Document]:
+    """Redact each document as a whole: values detected in the body are also replaced in the title."""
     out = []
     for d in docs:
-        text, _ = redactor.redact(d.text)
-        title, _ = redactor.redact(d.title)
+        text, mapping = redactor.redact(d.text)
+        title, _ = redactor.redact(_apply_mapping(d.title, mapping))
         out.append(replace(d, text=text, title=title, pii_spans=[]))
     return out
 

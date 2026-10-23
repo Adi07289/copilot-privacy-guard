@@ -61,3 +61,7 @@ def test_signoff_first_names_are_detected():
                        ("Best regards,\n  Kritika", "Kritika")]:
         assert any(s.entity_type == "PERSON" and s.value == name for s in d.detect(text)), text
     assert not any(s.entity_type == "PERSON" for s in d.detect("Regards to the team for the release."))
+
+def test_labelled_name_does_not_cross_a_line_break():
+    spans = PIIDetector().detect("Name: Neel Sathe\nEmployee ID: EMP52437")
+    assert [s.value for s in spans if s.entity_type == "PERSON"] == ["Neel Sathe"]
