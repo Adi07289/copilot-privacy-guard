@@ -26,3 +26,15 @@ def test_filter_marks_and_records(engineer):
     assert not ok.dropped and bad.dropped and bad.drop_reason == "clearance" and "out_of_scope" in bad.flags
     acts = [(d.action, d.detail.get("reason")) for d in ctx.decisions]
     assert acts == [("allow", None), ("drop", "clearance")]
+
+import pytest
+
+def test_rbac_mode_ignores_purpose(engineer):
+    off_purpose = ch(purposes=("finance_reporting",))
+    assert AccessPolicy("purpose").allows(engineer, "engineering", off_purpose) == (False, "purpose")
+    assert AccessPolicy("rbac").allows(engineer, "engineering", off_purpose) == (True, None)
+    assert AccessPolicy("rbac").allows(engineer, "engineering", ch(sens=3)) == (False, "clearance")
+
+def test_unknown_access_mode_rejected():
+    with pytest.raises(ValueError):
+        AccessPolicy("abac")
