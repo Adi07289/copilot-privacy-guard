@@ -32,20 +32,20 @@ cp .env.example .env                       # add GROQ_API_KEY for real LLM answe
 
 Regenerate everything with `.venv/bin/python scripts/run_all.py` (uses Groq when a key or the committed cache is available).
 
-| Configuration | Context PII exposure (to LLM provider) | Answer PII leakage | Over-sharing retrieval rate | Injection exposure rate | Injection success rate (LLM) | Answer-quality retention (ROUGE-L) | Answer-quality retention (cosine) | Index PII exposure | Added latency (ms) |
+| Configuration | Context PII exposure (to LLM provider) | Answer PII leakage (extractive) | Over-sharing retrieval rate | Injection exposure rate | Injection success rate (LLM) | Answer-quality retention (ROUGE-L) | Answer-quality retention (cosine) | Index PII exposure | Added latency (ms) |
 |---|---|---|---|---|---|---|---|---|---|
 | Vanilla RAG | 100.0% | 33.2% | 50.9% | 100.0% | 0.0% | 100.0% | 100.0% | 100.0% | +0.0 |
-| Inherited RBAC (Copilot-style) | 49.2% | 19.6% | 0.6% | 59.4% | 7.1% | 69.2% | 76.8% | 100.0% | -0.8 |
-| Redaction-only DLP | 0.0% | 0.0% | 50.9% | 100.0% | 7.1% | 50.1% | 60.6% | 100.0% | +46.2 |
-| Output-side filtering | 100.0% | 0.0% | 50.9% | 100.0% | 0.0% | 87.6% | 87.8% | 100.0% | +11.4 |
-| Delimiting only | 100.0% | 33.2% | 50.9% | 100.0% | 0.0% | 75.3% | 80.9% | 100.0% | -0.6 |
-| Heuristic screening only | 86.0% | 36.7% | 53.8% | 0.0% | 0.0% | 70.9% | 78.6% | 100.0% | -0.5 |
-| Copilot Privacy Guard (ours) | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 34.9% | 47.8% | 0.0% | +814.6 |
-| ours − LLM judge | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 34.9% | 47.8% | 0.0% | +105.8 |
-| ours − access filter | 0.0% | 0.0% | 55.0% | 0.0% | 0.0% | 43.8% | 56.4% | 0.0% | +381.7 |
-| ours − PII redaction | 40.6% | 19.7% | 0.0% | 0.0% | 0.0% | 49.7% | 63.2% | 100.0% | +1898.5 |
-| ours − redacted index | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 35.7% | 47.2% | 100.0% | +123.2 |
-| ours on dense retrieval | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 34.4% | 48.3% | 0.0% | +621.1 |
+| Inherited RBAC (Copilot-style) | 49.2% | 19.6% | 0.6% | 59.4% | 12.5% | 69.2% | 76.8% | 100.0% | -0.4 |
+| Redaction-only DLP | 0.0% | 0.0% | 50.9% | 100.0% | 12.5% | 50.1% | 60.6% | 100.0% | +39.6 |
+| Output-side filtering | 100.0% | 0.0% | 50.9% | 100.0% | 0.0% | 87.6% | 87.8% | 100.0% | +7.7 |
+| Delimiting only | 100.0% | 33.2% | 50.9% | 100.0% | 0.0% | 75.3% | 80.9% | 100.0% | -0.3 |
+| Heuristic screening only | 86.0% | 36.7% | 53.8% | 0.0% | 0.0% | 70.9% | 78.6% | 100.0% | -0.2 |
+| Copilot Privacy Guard (ours) | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 34.9% | 47.8% | 0.0% | +97.4 |
+| ours − LLM judge | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 34.9% | 47.8% | 0.0% | +97.7 |
+| ours − access filter | 0.0% | 0.0% | 55.0% | 0.0% | 0.0% | 43.8% | 56.4% | 0.0% | +121.2 |
+| ours − PII redaction | 48.8% | 19.7% | 0.0% | 0.0% | 0.0% | 49.7% | 63.2% | 100.0% | +58.3 |
+| ours − redacted index | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 36.5% | 48.4% | 100.0% | +97.8 |
+| ours on dense retrieval | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 34.4% | 48.3% | 0.0% | +130.0 |
 | Configuration | Group | Analogue of |
 |---|---|---|
 | Vanilla RAG | comparison | Lewis et al. (2020) RAG; the undefended target of DEAL, ALDEN and Qi et al. |

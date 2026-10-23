@@ -103,7 +103,7 @@ road = f"""# Roadmap — status at final review
 (ROOT / "docs" / "ROADMAP.md").write_text(road)
 
 readme = (ROOT / "README.md").read_text()
-start = readme.index("## Current results"); end = readme.index("## Layout")
+start = readme.index("## Results (") if "## Results (" in readme else readme.index("## Current results"); end = readme.index("## Layout")
 table = "\n".join(l for l in (R / "comparison.md").read_text().splitlines() if l.startswith("|"))
 readme = readme[:start] + f"""## Results (seed 42 · {M.get('n_queries')} queries · answers {M.get('groq_model')} · judge {M.get('judge_model')})
 
