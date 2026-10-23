@@ -35,3 +35,23 @@ def test_save_load_roundtrip(tmp_path):
 
 def test_personas():
     assert {u.role for u in PERSONAS} >= {"HR Manager", "Engineer", "Finance Analyst", "Intern", "CISO"}
+
+import base64, re
+from privacyguard.corpus.generator import INJECTION_CANARIES
+from privacyguard.models import Document
+
+def test_poisoned_ids_and_canaries_are_stable():
+    docs = generate_corpus(seed=42, n=80)
+    poisoned = {d.id: d for d in docs if d.is_poisoned}
+    assert set(poisoned) == {"email-010", "ticket-007", "code-007", "hr-003"}
+    assert {d.canary for d in poisoned.values()} == set(INJECTION_CANARIES)
+    for d in poisoned.values():
+        decoded = " ".join(base64.b64decode(b + "=" * (-len(b) % 4)).decode("ascii", "ignore")
+                           for b in re.findall(r"[A-Za-z0-9+/]{40,}={0,2}", d.text))
+        assert d.canary in d.text or d.canary in decoded
+    assert all(d.canary is None for d in docs if not d.is_poisoned)
+
+def test_old_corpus_without_canary_loads():
+    old = {"id": "x", "kind": "email", "department": "HR", "sensitivity": 1, "purposes": ["general"],
+           "title": "t", "text": "hello", "pii_spans": [], "is_poisoned": False}
+    assert Document.from_dict(old).canary is None

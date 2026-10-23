@@ -29,6 +29,7 @@ class Document:
     text: str
     pii_spans: list[PIISpan] = field(default_factory=list)
     is_poisoned: bool = False
+    canary: str | None = None
 
     def to_dict(self) -> dict:
         return asdict(self)
