@@ -95,3 +95,13 @@ def test_groq_judge_sends_json_mode_and_parses():
             self.kw = (system, user, json_mode); return '{"injection_probability": 0.3}', {"cached": False}
     c = Client()
     assert GroqJudge(c).judge("hello") == 0.3 and c.kw[2] is True and "<document>" in c.kw[1]
+
+def test_prompt_guard_judge_parses_probability():
+    from privacyguard.controls.injection import PromptGuardJudge
+    class Client:
+        def __init__(self, out): self.out, self.seen = out, None
+        def chat(self, system, user, max_tokens=400, json_mode=False):
+            self.seen = (system, user); return self.out, {}
+    c = Client("0.9995811581611633")
+    assert PromptGuardJudge(c).judge("x") == 0.9995811581611633 and c.seen[0] == ""
+    assert PromptGuardJudge(Client("not a number")).judge("x") is None

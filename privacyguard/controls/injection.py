@@ -87,6 +87,22 @@ class GroqJudge:
         return parse_judge(out)
 
 
+class PromptGuardJudge:
+    """Meta Llama Prompt Guard 2 (served on Groq): a dedicated injection classifier that returns a probability.
+    Used as a comparator in the injection benchmark, not inside the guarded pipeline."""
+    name = "prompt-guard-2"
+
+    def __init__(self, client):
+        self.client = client
+
+    def judge(self, text: str) -> float | None:
+        try:
+            out, _ = self.client.chat("", text[:2000], max_tokens=20)
+            return min(1.0, max(0.0, float(out.strip())))
+        except Exception:
+            return None
+
+
 MODES = ("spotlight", "heuristic", "heuristic+judge")
 
 

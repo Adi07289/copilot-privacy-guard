@@ -127,7 +127,8 @@ class GroqClient:
         if not self.api_key and self._client is None:
             raise LLMUnavailable("no GROQ_API_KEY and no cached response")
         kwargs: dict = dict(model=self.model, temperature=0, max_tokens=max_tokens,
-                            messages=[{"role": "system", "content": system}, {"role": "user", "content": user}])
+                            messages=([{"role": "system", "content": system}] if system else [])
+                            + [{"role": "user", "content": user}])
         if json_mode:
             kwargs["response_format"] = {"type": "json_object"}
         if self.model.startswith("openai/gpt-oss"):
@@ -186,6 +187,14 @@ def shared_cache(path: str | Path | None = None) -> LLMCache:
     if p not in _SHARED:
         _SHARED[p] = LLMCache(p)
     return _SHARED[p]
+
+
+def get_prompt_guard_client(cache: LLMCache | None = None) -> GroqClient | None:
+    key = os.getenv("GROQ_API_KEY") or None
+    cache = cache if cache is not None else shared_cache()
+    if not key and len(cache) == 0:
+        return None
+    return GroqClient(key, os.getenv("GROQ_PROMPT_GUARD_MODEL", "meta-llama/llama-prompt-guard-2-86m"), cache)
 
 
 def get_groq_client(cache: LLMCache | None = None, judge: bool = False) -> GroqClient | None:

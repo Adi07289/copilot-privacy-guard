@@ -111,3 +111,8 @@ def test_gpt_oss_models_get_low_reasoning_effort(tmp_path):
     GroqClient(None, "openai/gpt-oss-120b", LLMCache(tmp_path / "c.json"), client=api).chat("s", "u")
     GroqClient(None, "qwen/qwen3.8-27b", LLMCache(tmp_path / "d.json"), client=api).chat("s", "u")
     assert api.calls[0]["reasoning_effort"] == "low" and "reasoning_effort" not in api.calls[1]
+
+def test_empty_system_prompt_sends_only_the_user_message(tmp_path):
+    api = FakeAPI(["0.9"])
+    GroqClient(None, "meta-llama/llama-prompt-guard-2-86m", LLMCache(tmp_path / "c.json"), client=api).chat("", "text")
+    assert api.calls[0]["messages"] == [{"role": "user", "content": "text"}]
