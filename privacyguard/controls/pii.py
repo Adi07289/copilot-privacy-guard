@@ -117,19 +117,22 @@ class PIIRedactor(Control):
         c: Counter = Counter(k.strip("<>").rsplit("_", 1)[0] for k in mapping)
         return dict(c)
 
-    def apply(self, ctx: GuardContext) -> GuardContext:
-        if ctx.redacted_query is None:
-            ctx.redacted_query, mapping = self.redact(ctx.query)
-            ctx.pii_map.update(mapping)
-            ctx.decisions.append(Decision(self.name, "redact_query", None, {"entities": self._counts(mapping)}))
-            return ctx
+    def redact_query(self, ctx: GuardContext) -> GuardContext:
+        ctx.redacted_query, mapping = self.redact(ctx.query)
+        ctx.pii_map.update(mapping)
+        ctx.decisions.append(Decision(self.name, "redact_query", None, {"entities": self._counts(mapping)}))
+        return ctx
+
+    def redact_chunks(self, ctx: GuardContext) -> GuardContext:
         for ch in ctx.chunks:
             if ch.dropped:
                 continue
             ch.text, mapping = self.redact(ch.text)
             ctx.pii_map.update(mapping)
-            n = len(mapping)
-            if n:
-                ch.flags.append(f"redacted:{n}")
+            if mapping:
+                ch.flags.append(f"redacted:{len(mapping)}")
             ctx.decisions.append(Decision(self.name, "redact_chunk", ch.doc_id, {"entities": self._counts(mapping)}))
         return ctx
+
+    def apply(self, ctx: GuardContext) -> GuardContext:
+        return self.redact_query(ctx) if ctx.redacted_query is None else self.redact_chunks(ctx)
