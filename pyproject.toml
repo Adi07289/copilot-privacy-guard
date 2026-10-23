@@ -14,6 +14,9 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=8"]
 ner = ["spacy>=3.7"]
+compare = ["presidio-analyzer>=2.2"]
+dense = ["fastembed>=0.4"]
+docs = ["matplotlib>=3.8", "python-docx>=1.1", "python-pptx>=1.0", "docx2pdf>=0.1.8", "pymupdf>=1.24,<1.26"]
 [build-system]
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"

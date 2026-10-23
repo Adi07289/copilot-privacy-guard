@@ -4,13 +4,23 @@ from privacyguard.controls.base import Control
 from privacyguard.models import Chunk, Decision, GuardContext, User, CROSS_DEPT_ROLES
 
 
+ACCESS_MODES = ("rbac", "purpose")
+
+
 class AccessPolicy:
+    """rbac = clearance + department (Copilot-style inherited permissions); purpose = rbac + DPDP purpose rule."""
+
+    def __init__(self, mode: str = "purpose"):
+        if mode not in ACCESS_MODES:
+            raise ValueError(f"unknown access mode {mode!r}")
+        self.mode = mode
+
     def allows(self, user: User, purpose: str, chunk: Chunk) -> tuple[bool, str | None]:
         if user.clearance < chunk.sensitivity:
             return False, "clearance"
         if not (chunk.department == user.department or chunk.sensitivity == 0 or user.role in CROSS_DEPT_ROLES):
             return False, "department"
-        if not (purpose in chunk.purposes or "general" in chunk.purposes):
+        if self.mode == "purpose" and not (purpose in chunk.purposes or "general" in chunk.purposes):
             return False, "purpose"
         return True, None
 

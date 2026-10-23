@@ -45,8 +45,10 @@ class RecognizerRegistry:
         ])
 
 
-_HONORIFIC = re.compile(r"\b(?:Mr|Ms|Mrs|Dr|Shri|Smt)\.?\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,2})")
-_LABELLED = re.compile(r"(?:Name|From|Reported by|Employee|Contact person)\s*:\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2})")
+_HONORIFIC = re.compile(r"\b(?:Mr|Ms|Mrs|Dr|Shri|Smt)\.?[ \t]+([A-Z][a-z]+(?:[ \t]+[A-Z][a-z]+){0,2})")
+_SIGNOFF = re.compile(r"(?:Regards|Best regards|Kind regards|Warm regards|Thanks|Thank you|Cheers|Sincerely|Best),?"
+                      r"[ \t]*\n[ \t]*([A-Z][a-z]+(?:[ \t]+[A-Z][a-z]+)?)[ \t]*(?=\n|$)")
+_LABELLED = re.compile(r"(?:Name|From|Reported by|Employee|Contact person)[ \t]*:[ \t]*([A-Z][a-z]+(?:[ \t]+[A-Z][a-z]+){1,2})")
 
 
 @lru_cache(maxsize=1)
@@ -71,7 +73,7 @@ class PIIDetector:
             for ent in self._nlp(text).ents:
                 if ent.label_ == "PERSON":
                     spans.append(PIISpan(ent.start_char, ent.end_char, "PERSON", ent.text))
-        for rx in (_HONORIFIC, _LABELLED):
+        for rx in (_HONORIFIC, _LABELLED, _SIGNOFF):
             for m in rx.finditer(text):
                 spans.append(PIISpan(m.start(1), m.end(1), "PERSON", m.group(1)))
         return spans
@@ -117,19 +119,22 @@ class PIIRedactor(Control):
         c: Counter = Counter(k.strip("<>").rsplit("_", 1)[0] for k in mapping)
         return dict(c)
 
-    def apply(self, ctx: GuardContext) -> GuardContext:
-        if ctx.redacted_query is None:
-            ctx.redacted_query, mapping = self.redact(ctx.query)
-            ctx.pii_map.update(mapping)
-            ctx.decisions.append(Decision(self.name, "redact_query", None, {"entities": self._counts(mapping)}))
-            return ctx
+    def redact_query(self, ctx: GuardContext) -> GuardContext:
+        ctx.redacted_query, mapping = self.redact(ctx.query)
+        ctx.pii_map.update(mapping)
+        ctx.decisions.append(Decision(self.name, "redact_query", None, {"entities": self._counts(mapping)}))
+        return ctx
+
+    def redact_chunks(self, ctx: GuardContext) -> GuardContext:
         for ch in ctx.chunks:
             if ch.dropped:
                 continue
             ch.text, mapping = self.redact(ch.text)
             ctx.pii_map.update(mapping)
-            n = len(mapping)
-            if n:
-                ch.flags.append(f"redacted:{n}")
+            if mapping:
+                ch.flags.append(f"redacted:{len(mapping)}")
             ctx.decisions.append(Decision(self.name, "redact_chunk", ch.doc_id, {"entities": self._counts(mapping)}))
         return ctx
+
+    def apply(self, ctx: GuardContext) -> GuardContext:
+        return self.redact_query(ctx) if ctx.redacted_query is None else self.redact_chunks(ctx)

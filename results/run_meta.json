@@ -1,0 +1,41 @@
+{
+ "seed": 42,
+ "n_docs": 80,
+ "n_queries": 36,
+ "configs": [
+  "none",
+  "rbac",
+  "pii_only",
+  "output_filter",
+  "spotlight",
+  "heuristic",
+  "full",
+  "full_no_judge",
+  "full_no_access",
+  "full_no_pii",
+  "full_no_index",
+  "full_dense"
+ ],
+ "dense_available": true,
+ "judge": true,
+ "llm_provider": "groq",
+ "llm_answer_fallbacks": 0,
+ "judge_unavailable_in_bench": 0,
+ "groq_model": "qwen/qwen3.8-27b",
+ "judge_model": "openai/gpt-oss-120b",
+ "prompt_guard_model": "meta-llama/llama-prompt-guard-2-86m",
+ "cache_entries": 407,
+ "cache_hits": 1407,
+ "cache_misses": 6,
+ "judge_call_ms_median": 552.9,
+ "python": "3.13.2",
+ "packages": {
+  "scikit-learn": "1.9.1",
+  "spacy": "3.8.16",
+  "presidio-analyzer": "2.2.364",
+  "fastembed": "0.9.0",
+  "openai": "3.37.0",
+  "faker": "40.43.0"
+ },
+ "runtime_s": 72.1
+}
