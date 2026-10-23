@@ -8,3 +8,4 @@ data/audit.jsonl
 *.egg-info/
 .gstack/
 .DS_Store
+data/audit_*.jsonl

@@ -11,6 +11,12 @@ load_dotenv(ROOT / ".env")
 
 DEFAULT_MODEL = "llama-3.1-8b-instant"
 _RETRY_STATUS = {429, 500, 502, 503, 504}
+_RETRY_CLASSES = ("APIConnectionError", "APITimeoutError", "ConnectionError", "TimeoutError")
+
+
+def _retryable(e: Exception) -> bool:
+    """Rate limits, server errors and transient network failures (DNS blips, timeouts) are retried."""
+    return getattr(e, "status_code", None) in _RETRY_STATUS or type(e).__name__ in _RETRY_CLASSES
 
 SYSTEM_PROMPT = (
     "You are an enterprise assistant. Answer only from the provided context, concisely. "
@@ -139,7 +145,7 @@ class GroqClient:
             try:
                 r = self._api().chat.completions.create(**kwargs)
             except Exception as e:
-                if getattr(e, "status_code", None) in _RETRY_STATUS and attempt < self.max_retries:
+                if _retryable(e) and attempt < self.max_retries:
                     self._sleep(_retry_after(e) or delay)
                     delay = min(delay * 2, 60.0)
                     continue

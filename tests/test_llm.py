@@ -116,3 +116,12 @@ def test_empty_system_prompt_sends_only_the_user_message(tmp_path):
     api = FakeAPI(["0.9"])
     GroqClient(None, "meta-llama/llama-prompt-guard-2-86m", LLMCache(tmp_path / "c.json"), client=api).chat("", "text")
     assert api.calls[0]["messages"] == [{"role": "user", "content": "text"}]
+
+class APIConnectionError(Exception):
+    """Same class name as openai.APIConnectionError: no status_code attribute."""
+
+def test_connection_errors_are_retried(tmp_path):
+    sleeps = []
+    api = FakeAPI(["ok"], errors=[APIConnectionError("dns blip"), APIConnectionError("dns blip")])
+    c = GroqClient(None, "m", LLMCache(tmp_path / "c.json"), client=api, sleep=sleeps.append)
+    assert c.chat("s", "u")[0] == "ok" and len(sleeps) == 2
