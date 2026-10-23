@@ -130,6 +130,8 @@ class GroqClient:
                             messages=[{"role": "system", "content": system}, {"role": "user", "content": user}])
         if json_mode:
             kwargs["response_format"] = {"type": "json_object"}
+        if self.model.startswith("openai/gpt-oss"):
+            kwargs["reasoning_effort"] = "low"          # reasoning models: keep thinking short, leave room for output
         delay = 2.0
         for attempt in range(self.max_retries + 1):
             t0 = time.perf_counter()

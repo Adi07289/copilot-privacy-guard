@@ -105,3 +105,9 @@ def test_json_mode_sets_response_format(tmp_path):
     api = FakeAPI(['{"a": 1}'])
     GroqClient(None, "m", LLMCache(tmp_path / "c.json"), client=api).chat("s", "u", json_mode=True)
     assert api.calls[0]["response_format"] == {"type": "json_object"} and api.calls[0]["temperature"] == 0
+
+def test_gpt_oss_models_get_low_reasoning_effort(tmp_path):
+    api = FakeAPI(["ok", "ok"])
+    GroqClient(None, "openai/gpt-oss-120b", LLMCache(tmp_path / "c.json"), client=api).chat("s", "u")
+    GroqClient(None, "qwen/qwen3.8-27b", LLMCache(tmp_path / "d.json"), client=api).chat("s", "u")
+    assert api.calls[0]["reasoning_effort"] == "low" and "reasoning_effort" not in api.calls[1]
