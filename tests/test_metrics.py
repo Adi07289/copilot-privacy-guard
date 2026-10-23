@@ -10,9 +10,13 @@ def _doc(i, text, spans, dept="HR", sens=3):
                     title="t", text=text, pii_spans=spans)
 
 def test_query_set_shape():
-    assert len(QUERY_SET) == 20
-    assert sum(q.targets_poisoned for q in QUERY_SET) == 4 and sum(q.cross_dept_probe for q in QUERY_SET) == 5
-    assert len({q.id for q in QUERY_SET}) == 20
+    from collections import Counter
+    from privacyguard.corpus.generator import PERSONAS
+    from privacyguard.models import PURPOSES
+    assert len(QUERY_SET) == 36 and len({q.id for q in QUERY_SET}) == 36
+    assert Counter(q.kind for q in QUERY_SET) == {"unauthorized_probe": 8, "authorized_sensitive": 8,
+                                                  "utility": 12, "injection": 8}
+    assert {q.user_id for q in QUERY_SET} <= {u.id for u in PERSONAS} and {q.purpose for q in QUERY_SET} <= set(PURPOSES)
 
 def test_pii_leakage_counts_only_retrieved_docs():
     d1 = _doc(1, "Aadhaar 234512345678 PAN ABCPE1234F", [PIISpan(8, 20, "AADHAAR", "234512345678"), PIISpan(25, 35, "PAN", "ABCPE1234F")])
