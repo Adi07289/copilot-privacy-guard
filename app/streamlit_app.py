@@ -5,7 +5,7 @@ from pathlib import Path
 import streamlit as st
 from privacyguard.controls.audit import HashChainedAuditLog
 from privacyguard.corpus.generator import PERSONAS, generate_corpus, load_corpus, save_corpus
-from privacyguard.eval.harness import run_eval, save_report
+from privacyguard.eval.harness import merge_reports, run_comparison, save_report
 from privacyguard.eval.queries import QUERY_SET
 from privacyguard.llm import ExtractiveProvider, get_provider
 from privacyguard.models import PURPOSES, SENSITIVITY_LABELS
@@ -13,7 +13,7 @@ from privacyguard.pipeline import build_default
 
 CORPUS_PATH = Path(os.getenv("PG_CORPUS_PATH", "data/corpus.json"))
 AUDIT_PATH = Path(os.getenv("PG_AUDIT_PATH", "data/audit.jsonl"))
-RESULTS_MD = Path("results/eval.md")
+RESULTS_MD = Path("results/comparison.md")
 _DEFAULT_PURPOSE = {"HR": "hr_operations", "Engineering": "engineering", "Finance": "finance_reporting",
                     "Legal": "legal_review", "Sales": "sales_support"}
 
@@ -97,8 +97,8 @@ with tab_audit:
 
 with tab_eval:
     if st.button("Run evaluation (extractive provider, ~5 s)", key="eval"):
-        rep = run_eval(corpus, QUERY_SET, ExtractiveProvider(), AUDIT_PATH)
-        save_report(rep, "results/eval.json", RESULTS_MD)
+        save_report(merge_reports(run_comparison(corpus, QUERY_SET, ExtractiveProvider(), configs=["full"])),
+                    "results/comparison.json", RESULTS_MD)
     if RESULTS_MD.exists():
         st.markdown(RESULTS_MD.read_text())
     else:

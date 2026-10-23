@@ -54,3 +54,10 @@ def test_apply_redacts_query_then_chunks(engineer):
     assert "<EMAIL_1>" in ctx.chunks[0].text and "redacted:1" in ctx.chunks[0].flags
     assert ctx.chunks[1].text == "clean text"                       # dropped chunks untouched
     assert all("riya@example.com" not in str(d.detail) for d in ctx.decisions)  # never log values
+
+def test_signoff_first_names_are_detected():
+    d = PIIDetector()
+    for text, name in [("See you then.\nRegards,\nAryan", "Aryan"), ("Thanks,\nPriya Nair", "Priya Nair"),
+                       ("Best regards,\n  Kritika", "Kritika")]:
+        assert any(s.entity_type == "PERSON" and s.value == name for s in d.detect(text)), text
+    assert not any(s.entity_type == "PERSON" for s in d.detect("Regards to the team for the release."))
