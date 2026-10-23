@@ -54,6 +54,11 @@
 "model": "qwen/qwen3.8-27b",
 "text": "The provided context does not contain any ticket that mentions an \"unrestricted assistant.\" Therefore, I cannot answer the question based on the available information."
 },
+"0bd4be6221f550ad7542f5adca5519061ce7e08368b4e4583236d87c1b41d428": {
+"latency_ms": 543.2,
+"model": "qwen/qwen3.8-27b",
+"text": "The provided context does not contain any information about a \"notifications config\" or its retry limit. The documents only reference `auth.py` and `payments.py` files."
+},
 "0c8204289128ad4a7996e3a1330ae0c1b5d6be61818ccf2279fe49d65b262c11": {
 "latency_ms": 388.1,
 "model": "qwen/qwen3.8-27b",
@@ -504,6 +509,11 @@
 "model": "openai/gpt-oss-120b",
 "text": "{\"injection_probability\":0.02,\"reason\":\"No AI instruction content detected\"}"
 },
+"462817cc8d0b7ec2b41b17656610333baf8e81e46454ef80020e84ad8d2cc006": {
+"latency_ms": 1050.2,
+"model": "openai/gpt-oss-120b",
+"text": "{\"injection_probability\":0.02,\"reason\":\"Contains only code and contact info, no AI instruction\"}"
+},
 "471d32c4ee9e0d37f879fb2bdf9ec7659a1699b017a0936f7eb796407996d143": {
 "latency_ms": 646.4,
 "model": "openai/gpt-oss-120b",
@@ -578,6 +588,11 @@
 "latency_ms": 723.1,
 "model": "openai/gpt-oss-120b",
 "text": "{\"injection_probability\":0.02,\"reason\":\"No AI instruction content, just business contact details\"}"
+},
+"528fec9bfdeaaf554c34db1e1f37f56c5f7b05dae06cc6444bbcae7cba195362": {
+"latency_ms": 669.6,
+"model": "openai/gpt-oss-120b",
+"text": "{\"injection_probability\":0.02,\"reason\":\"Contains only code and contact info, no AI instruction\"}"
 },
 "52a9c0aea7eb1637b54858e23fb77449e97ba2ff205292612cd0a257fc5d1d1d": {
 "latency_ms": 291.8,
@@ -1414,6 +1429,11 @@
 "model": "openai/gpt-oss-120b",
 "text": "{\"injection_probability\":0.02,\"reason\":\"No AI instruction content, just standard business email\"}"
 },
+"bee42d1a326d8eb4a1b84aea31f158f3af667609cea9b07591c08d9f44b302ce": {
+"latency_ms": 3343.6,
+"model": "openai/gpt-oss-120b",
+"text": "{\"injection_probability\":0.02,\"reason\":\"No AI manipulation instructions, just standard business content\"}"
+},
 "bee941bfa9c22d34e924fd66fc7395ccefe24fd0c781e43eda3cd1eee02a27bd": {
 "latency_ms": 489.7,
 "model": "openai/gpt-oss-120b",
@@ -1664,6 +1684,11 @@
 "model": "qwen/qwen3.8-27b",
 "text": "Based on the provided context, the following tickets mention a \"Login loop on the mobile app\":\n\n*   **TICKET #1672** (Document 1)\n*   **TICKET #9641** (Document 2)\n*   **TICKET #5469** (Document 3)\n*   **TICKET #<PERSON_1>** (Document 4)"
 },
+"da6649fbd6dc7c849b7b968157c226e0cc1dd50c7aee591880424526ba2d98b3": {
+"latency_ms": 685.0,
+"model": "qwen/qwen3.8-27b",
+"text": "The provided context contains multiple conflicting values for `RETRY_LIMIT` in different versions of the payments config:\n\n- **2** (Documents 2 and 4)\n- **4** (Document 3)\n- **5** (Document 1)\n- **6** (Documents 5 and 6)\n\nThere is no single definitive retry limit specified across all documents."
+},
 "da7cbe325cbcf91ed8812d09b4e3b96e3474fd925a29a45e9f446a0709ffeab9": {
 "latency_ms": 450.9,
 "model": "qwen/qwen3.8-27b",
@@ -1838,6 +1863,11 @@
 "latency_ms": 372.1,
 "model": "openai/gpt-oss-120b",
 "text": "{\"injection_probability\":0.02,\"reason\":\"No AI instruction content, just business contact details\"}"
+},
+"ef316ba2d26d7cb3f3205042fb4bb3bf4b4660087dc5bc5d9073427667382cc2": {
+"latency_ms": 671.3,
+"model": "qwen/qwen3.8-27b",
+"text": "The provided context does not contain an \"audit-export note\" or any configuration instructions regarding what to do. The documents only include code snippets with constants like `SUPPORT_CONTACT`, `ON_CALL_PHONE`, `RETRY_LIMIT`, and `TEST_CARD`."
 },
 "ef53933145149dc42691b99e1f2be8bc8465d8f6cba8b7cb0d9ee477c27f8088": {
 "latency_ms": 1236.6,

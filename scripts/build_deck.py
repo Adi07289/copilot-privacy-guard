@@ -233,14 +233,14 @@ old_tbl = [x for x in s7.shapes if x.has_table][0]; old_tbl._element.getparent()
 table(s7, 0.89, 3.45, 11.56, [["Metric", "Vanilla RAG", "Copilot Privacy Guard"],
       ["Raw PII stored in the vector index", a("none", "index_pii_exposure", 0), a("full", "index_pii_exposure", 0)],
       ["Poisoned chunks reaching the LLM", a("none", "injection_exposure_rate", 0), a("full", "injection_exposure_rate", 0)],
-      [f"Injection success — canary obeyed by the LLM ({A['none']['injection_success_n']} attacked queries)", a("none", "injection_success_rate", 0), a("full", "injection_success_rate", 0)],
+      ["Injection success — canary obeyed by the LLM (injection queries)", a("none", "injection_success_rate", 0), a("full", "injection_success_rate", 0)],
       ["PII in final LLM answers", a("none", "answer_pii_leakage_llm"), a("full", "answer_pii_leakage_llm", 0)],
       ["Answer-quality retention (ROUGE-L vs undefended)", "100%", a("full", "answer_quality_rouge_l")],
-      ["Added latency per query", "0 ms", f"+{A['full']['added_latency_ms']:.0f} ms"]], [6.6, 2.4, 2.56], size=12, row_h=0.4)
+      ["Added latency per query (median)", "0 ms", f"+{A['full']['added_latency_ms']:.0f} ms"]], [6.6, 2.4, 2.56], size=12, row_h=0.4)
 notes(s7, f"Same retriever, same LLM. PII sent to the provider drops from {a('none','context_pii_exposure',0)} to zero, "
           f"over-sharing from {a('none','oversharing_rate')} to zero, raw PII in the index and poisoned chunks reaching the model "
           f"both to zero. The honest part is the last two rows: answer-quality retention falls to {a('full','answer_quality_rouge_l')} "
-          f"and the judge costs about {A['full']['added_latency_ms']/1000:.1f} seconds per query. Note the LLM itself obeyed almost "
+          f"and each uncached judge call takes about {(META.get('judge_call_ms_median') or 0):.0f} ms. Note the LLM itself obeyed almost "
           "no canaries — model resistance isn't something the deployer controls, so we design for zero exposure instead.")
 
 # ---- new: literature positioning matrix
@@ -380,7 +380,7 @@ notes(s8, "Three things nobody in our 32-paper survey does together: purpose-awa
 # ---- old slide 9 (limitations)
 sh = shapes(s9)
 set_text(sh["Text 3"], f"Utility cost — answer-quality retention {a('full','answer_quality_rouge_l')} ROUGE-L: redaction removes names and contacts users ask for; heuristic false positives drop benign chunks (A12 fails).")
-set_text(sh["Text 6"], f"Latency — the LLM judge adds ~{(A['full']['added_latency_ms']-A['full_no_judge']['added_latency_ms'])/1000:.1f} s per query; caching and batching would cut it.")
+set_text(sh["Text 6"], f"Latency — median +{A['full']['added_latency_ms']:.0f} ms per query with caches; each uncached judge call takes ~{(META.get('judge_call_ms_median') or 0):.0f} ms.")
 set_text(sh["Text 9"], "Synthetic corpus — a held-out set limits author bias; two detector fixes made after the first run are disclosed.")
 set_text(sh["Text 12"], "Static access model — tags on documents, not an identity-provider integration.")
 set_text(sh["Text 14"], "Injection success has few positives — the LLM itself refused most canaries; exposure is the robust measure.")

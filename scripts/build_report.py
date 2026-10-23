@@ -139,7 +139,7 @@ P(f"Retrieval-augmented enterprise assistants such as Microsoft 365 Copilot answ
   f"for Microsoft Presidio as shipped, and the LLM judge detected {pct(BENCH['tpr']['judge'],0)} of 24 injection payloads "
   f"(including paraphrased and Hindi ones) with no false positives on hard negatives, against {pct(BENCH['tpr']['heuristic'],0)} "
   f"for the heuristic. These gains cost answer utility ({a('full','answer_quality_rouge_l')} ROUGE-L retention against the "
-  f"undefended answers) and about {A['full']['added_latency_ms']/1000:.1f} s of latency per query, which we report as the "
+  f"undefended answers) and a median of +{A['full']['added_latency_ms']:.0f} ms per query (an uncached judge call takes about {(META.get('judge_call_ms_median') or 0):.0f} ms), which we report as the "
   f"central trade-off. All controls are mapped clause by clause to the DPDP Act 2023, DPDP Rules 2025, GDPR and the EU AI Act, "
   f"with a DPIA risk register and a {len(checks)}-item assurance checklist that runs against the system ({n_pass} pass).")
 
@@ -240,7 +240,7 @@ T(["Metric", "Vanilla RAG", "Copilot Privacy Guard"], [
     ["Poisoned chunks reaching the LLM", a("none", "injection_exposure_rate"), a("full", "injection_exposure_rate")],
     ["Injection success (canary obeyed by LLM)", a("none", "injection_success_rate"), a("full", "injection_success_rate")],
     ["Answer-quality retention (ROUGE-L / cosine)", "100% / 100%", f"{a('full','answer_quality_rouge_l')} / {a('full','answer_quality_cosine')}"],
-    ["Added latency per query", "0 ms", f"+{A['full']['added_latency_ms']:.0f} ms"]], [8, 4, 4.5])
+    ["Added latency per query (median)", "0 ms", f"+{A['full']['added_latency_ms']:.0f} ms"]], [8, 4, 4.5])
 
 # ---------------------------------------------------------------- experimental analysis
 H("Experimental Analysis (with comparison to other research works)")
@@ -358,7 +358,8 @@ B(["Synthetic corpus: written by the authors; the held-out PII set reduces but d
    f"Small sets: 36 queries and 24 payloads; injection success rests on {A['none']['injection_success_n']} attacked queries.",
    "Likelihood/impact scores in the DPIA are expert judgement; only residual scores are tied to measured evidence.",
    "Comparative configurations are simplified analogues, not reproductions of the cited systems.",
-   "Latency includes uncached LLM-judge calls; production caching and batching would lower it."])
+   f"Latency is the median per-query delta with committed caches (robust to rate-limit back-off); an uncached judge call takes about {(META.get('judge_call_ms_median') or 0):.0f} ms.",
+   "Three of the four corpus payloads contain their canary verbatim, so a model that quoted rather than obeyed would count as an injection success; the exposure metric does not depend on this."])
 
 # ---------------------------------------------------------------- future work / conclusion
 H("Future work")

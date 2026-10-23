@@ -17,7 +17,7 @@ from privacyguard.retrieval import build_indexes
 
 METRICS = [
     ("context_pii_exposure", "Context PII exposure (to LLM provider)", "lower"),
-    ("pii_leakage_rate", "Answer PII leakage", "lower"),
+    ("pii_leakage_rate", "Answer PII leakage (extractive)", "lower"),
     ("oversharing_rate", "Over-sharing retrieval rate", "lower"),
     ("injection_exposure_rate", "Injection exposure rate", "lower"),
     ("injection_success_rate", "Injection success rate (LLM)", "lower"),
@@ -50,7 +50,8 @@ def aggregate(runs: list[dict], configs: list[str], index_exposure: dict[str, fl
     for c in configs:
         rows = [x for x in runs if x["config"] == c]
         tot = sum(x["inj_total"] for x in rows)
-        measured = [x for x in rows if x["inj_success"] is not None and x["provider_used"] != "extractive"]
+        measured = [x for x in rows if x["kind"] == "injection" and x["inj_success"] is not None
+                    and x["provider_used"] != "extractive"]
         out[c] = {
             "context_pii_exposure": _mean(x["context_exposure"] for x in rows),
             "pii_leakage_rate": _mean(x["pii_leakage"] for x in rows),
@@ -58,16 +59,28 @@ def aggregate(runs: list[dict], configs: list[str], index_exposure: dict[str, fl
             "injection_exposure_rate": round(sum(x["inj_exposed"] for x in rows) / tot, 4) if tot else None,
             "injection_success_rate": _mean(1.0 if x["inj_success"] else 0.0 for x in measured),
             "injection_success_n": len(measured),
-            "injection_success_excluded_fallback": sum(1 for x in rows if x["inj_success"] is not None
-                                                       and x["provider_used"] == "extractive"),
+            "injection_success_excluded_fallback": sum(1 for x in rows if x["kind"] == "injection"
+                                                       and x["inj_success"] is not None and x["provider_used"] == "extractive"),
             "answer_quality_rouge_l": _mean(x.get("rouge_l") for x in rows),
             "answer_quality_cosine": _mean(x.get("cosine") for x in rows),
+            "answer_quality_n": sum(1 for x in rows if x.get("rouge_l") is not None),
             "index_pii_exposure": index_exposure.get(c),
-            "added_latency_ms": round(statistics.mean(x["latency_ms"] - ref_lat.get(x["query_id"], x["latency_ms"])
-                                                      for x in rows), 2) if rows else None,
+            # median, not mean: one rate-limit sleep or cold-cache judge call must not define the cost
+            "added_latency_ms": round(statistics.median(x["latency_ms"] - ref_lat.get(x["query_id"], x["latency_ms"])
+                                                        for x in rows), 2) if rows else None,
             "n_runs": len(rows),
         }
     return out
+
+
+def _score_quality(runs: list[dict]) -> None:
+    """ROUGE-L / cosine vs the `none` answer, only when both answers came from the same provider (no fallback mix)."""
+    ref = {x["query_id"]: x for x in runs if x["config"] == "none"}
+    for x in runs:
+        r = ref.get(x["query_id"])
+        if x["kind"] == "utility" and r is not None and r["provider_used"] == x["provider_used"]:
+            x["rouge_l"] = round(M.rouge_l_f1(x["answer"], r["answer"]), 4)
+            x["cosine"] = round(M.cosine_sim(x["answer"], r["answer"]), 4)
 
 
 def run_comparison(corpus: list[Document], queries: list[EvalQuery], provider: LLMProvider,
@@ -100,11 +113,7 @@ def run_comparison(corpus: list[Document], queries: list[EvalQuery], provider: L
                          "pii_leakage": M.pii_leakage_rate(r, by_id), "context_exposure": M.context_pii_exposure(r, by_id),
                          "oversharing": M.oversharing_rate(r, user, q.purpose, policy),
                          "inj_exposed": exposed, "inj_total": total, "inj_success": M.injection_success(r, by_id)})
-    ref = {x["query_id"]: x["answer"] for x in runs if x["config"] == "none"}
-    for x in runs:
-        if x["kind"] == "utility":
-            x["rouge_l"] = round(M.rouge_l_f1(x["answer"], ref[x["query_id"]]), 4)
-            x["cosine"] = round(M.cosine_sim(x["answer"], ref[x["query_id"]]), 4)
+    _score_quality(runs)
     exposure = {}
     for c in configs:
         v = M.index_pii_exposure(pipes[c].retriever.indexed_texts, corpus)
@@ -122,7 +131,7 @@ def merge_reports(det: ComparisonReport, llm: ComparisonReport | None = None) ->
             for key in LLM_KEYS:
                 agg[c][key] = src.get(key)
             agg[c]["answer_pii_leakage_llm"] = src.get("pii_leakage_rate")
-            agg[c]["answer_quality_source"] = "llm"
+            agg[c]["answer_quality_source"] = "llm" if src.get("answer_quality_n") else "extractive"
         else:
             agg[c]["injection_success_rate"] = None
             agg[c]["answer_pii_leakage_llm"] = None

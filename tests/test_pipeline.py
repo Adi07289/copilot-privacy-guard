@@ -109,3 +109,19 @@ def test_placeholders_are_not_retrieval_terms(mini_corpus, tmp_path, engineer):
     """A query that is pure PII becomes '<PERSON_1>'; it must not match every redacted doc that had a name."""
     r = _rig(mini_corpus, tmp_path, "full").run(engineer, "engineering", "Kiran Rao")
     assert r.query_sent == "<PERSON_1>" and r.chunks == [] and r.context_sent == []
+
+class RecordingJudge:
+    def __init__(self): self.seen = []
+    def judge(self, text):
+        self.seen.append(text); return 0.0
+
+def test_judge_never_sees_raw_pii_when_chunks_are_redacted(mini_corpus, tmp_path, ciso):
+    j = RecordingJudge()
+    _rig(mini_corpus, tmp_path, "full_no_index", judge=j).run(ciso, "hr_operations", Q)
+    assert j.seen and not any(v in t for t in j.seen for v in _gold(mini_corpus))          # I-3
+
+def test_judge_inputs_count_towards_provider_exposure(mini_corpus, tmp_path, ciso):
+    from privacyguard.eval.metrics import context_pii_exposure
+    j = RecordingJudge()
+    r = _rig(mini_corpus, tmp_path, "full_no_pii", judge=j).run(ciso, "hr_operations", Q)
+    assert r.judge_inputs and context_pii_exposure(r, {d.id: d for d in mini_corpus}) > 0  # I-3

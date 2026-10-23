@@ -29,11 +29,11 @@
 
 **8 · Setup (40 s).** 80 synthetic Indian-enterprise documents with 369 labelled PII spans and 4 poisoned documents; 36 queries from five personas. Every defence is a configuration of the same pipeline — same corpus, retriever and LLM — so only the defence changes. Injection queries come from a persona *allowed* to read the poisoned document, so we test the injection control, not access control. Non-ours rows are simplified analogues, not reproductions.
 
-**9 · Headline results (60 s).** PII sent to the provider: 100% → 0%. Over-sharing: 50.9% → 0%. Raw PII in the index and poisoned chunks reaching the model: both to zero. The honest rows: answer-quality retention falls to 34.9% ROUGE-L, and the judge costs about 0.8 s per query. The model itself obeyed almost no canaries — vanilla 0% of 14 — but that is model behaviour, not a control we own, so we design for zero exposure.
+**9 · Headline results (60 s).** PII sent to the provider: 100% → 0%. Over-sharing: 50.9% → 0%. Raw PII in the index and poisoned chunks reaching the model: both to zero. The honest rows: answer-quality retention falls to 34.9% ROUGE-L, median added latency is +97 ms, and an uncached judge call takes about 553 ms. The model itself obeyed almost no canaries — vanilla 0% of 8 — but that is model behaviour, not a control we own, so we design for zero exposure.
 
 **10 · Comparative study (75 s).** Read it by column. Copilot-style RBAC cuts over-sharing to 0.6% but still sends 49% of PII to the provider and lets 59% of poisoned chunks through. Redaction-only leaves over-sharing at 51%. Output filtering looks clean in the answer while the provider still receives 100% — under DPDP §8(1) that is still the fiduciary's responsibility. Every single-family defence leaves an exposure open; ours closes all four.
 
-**11 · Ablation (40 s).** Remove one control and exactly one exposure returns: no access filter → over-sharing 55%; no redaction → 41% of PII to the provider; no redacted index → the index holds every value again. Removing the judge changes nothing on the corpus but drops latency to +106 ms — its value is on harder payloads.
+**11 · Ablation (40 s).** Remove one control and exactly one exposure returns: no access filter → over-sharing 55%; no redaction → 49% of PII to the provider; no redacted index → the index holds every value again. Removing the judge changes nothing on the corpus but drops latency to +98 ms — its value is on harder payloads.
 
 **12 · PII vs Presidio (50 s).** In Review 3 we called Presidio US-centric; we checked — it ships Aadhaar and PAN recognizers, disabled. So we measured: held-out F1 89.5% for ours vs 54.3% as shipped and 64.1% with India recognizers on. Presidio has nothing for IFSC, UPI or rupee salaries — and it beats us on spaced mobiles and written dates, which are our gaps.
 
@@ -43,7 +43,7 @@
 
 **15 · Unique factor (30 s).** Purpose-aware access as a DPDP rule; India-first PII measured against Presidio; a full pipeline measured against the alternatives with compliance evidence generated from results.
 
-**16 · Limitations (40 s).** Utility and latency cost; synthetic corpus with a held-out check (and two detector fixes after the first run, disclosed); static access tags; few positive injection successes because the model resists — exposure is the robust measure.
+**16 · Limitations (40 s).** Utility and latency cost; canaries appear verbatim in three payloads, so quoting would count as success; synthetic corpus with a held-out check (and two detector fixes after the first run, disclosed); static access tags; few positive injection successes because the model resists — exposure is the robust measure.
 
 **17 · Future work + thanks (20 s).** Judge-only decisions, re-identifying placeholders for authorised users, wider recognizers, output egress control, identity-provider integration. Thank you — happy to take questions or run the demo.
 
@@ -58,7 +58,7 @@
 - **Why not reproduce the papers?** Training-time defences (StruQ, SPARSE) need fine-tuning/GPUs. We compare defence *families* on identical data and say so on every slide; reported numbers are in Appendix B as context only.
 - **0% looks too good.** It is 0% on 36 queries; the held-out PII F1 (89.5%) shows the detector isn't perfect. Real text would leak some.
 - **Answer quality is low — is it usable?** 34.9% ROUGE-L is the measured cost; much of it is names/contacts the guard deliberately removes. Future work re-identifies them for authorised users.
-- **What does the judge cost?** ~0.7 s per query uncached; batching and caching reduce it.
+- **What does the judge cost?** median +97 ms per query with caches; each uncached judge call ≈ 553 ms. Batching reduces it.
 - **Which DPDP sections?** §4 and §6(1) purpose limitation → access filter; §8(1) processors and §8(5) safeguards → redaction, redacted index, screening; §8(6) and Rules 6–7 → audit chain; §10(2)(c) and Rule 13 → DPIA + checklist.
 - **Why did the LLM resist the canaries?** Modern models are trained against obvious injections; we measured it and report it. The guard removes the payload so safety doesn't depend on it.
 - **Is the corpus real?** Synthetic, seeded and labelled — so every number reproduces. A held-out set written in different formats limits bias.

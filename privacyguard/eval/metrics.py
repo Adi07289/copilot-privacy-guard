@@ -62,7 +62,7 @@ def context_pii_exposure(result: RAGResult, corpus_by_id: dict[str, Document]) -
     values = _gold_values(result, corpus_by_id)
     if not values:
         return None
-    ctx = "\n".join(result.context_sent)
+    ctx = "\n".join(list(result.context_sent) + list(getattr(result, "judge_inputs", [])))   # answer LLM + judge
     return sum(1 for v in values if v in ctx) / len(values)
 
 

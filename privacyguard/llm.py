@@ -113,11 +113,12 @@ class GroqClient:
     name = "groq"
 
     def __init__(self, api_key: str | None, model: str = DEFAULT_MODEL, cache: LLMCache | None = None,
-                 client=None, max_retries: int = 6, sleep: Callable[[float], None] = time.sleep):
+                 client=None, max_retries: int = 6, sleep: Callable[[float], None] = time.sleep, breaker: int = 3):
         self.api_key, self.model = api_key, model
         self.cache = cache if cache is not None else shared_cache()
         self._client, self.max_retries, self._sleep = client, max_retries, sleep
         self.calls = 0
+        self.breaker, self._exhausted = breaker, 0       # consecutive calls that exhausted their retries
 
     def _api(self):
         if self._client is None:
@@ -132,6 +133,8 @@ class GroqClient:
             return hit["text"], {**hit, "cached": True}
         if not self.api_key and self._client is None:
             raise LLMUnavailable("no GROQ_API_KEY and no cached response")
+        if self._exhausted >= self.breaker:
+            raise LLMUnavailable("circuit open: provider kept failing; falling back for the rest of the run")
         kwargs: dict = dict(model=self.model, temperature=0, max_tokens=max_tokens,
                             messages=([{"role": "system", "content": system}] if system else [])
                             + [{"role": "user", "content": user}])
@@ -146,14 +149,17 @@ class GroqClient:
                 r = self._api().chat.completions.create(**kwargs)
             except Exception as e:
                 if _retryable(e) and attempt < self.max_retries:
-                    self._sleep(_retry_after(e) or delay)
-                    delay = min(delay * 2, 60.0)
+                    self._sleep(min(_retry_after(e) or delay, 30.0))
+                    delay = min(delay * 2, 30.0)
                     continue
+                if _retryable(e):
+                    self._exhausted += 1
                 raise
             text = (r.choices[0].message.content or "").strip()
             entry = {"text": text, "model": self.model, "latency_ms": round((time.perf_counter() - t0) * 1000, 1)}
             self.cache.put(key, entry)
             self.calls += 1
+            self._exhausted = 0
             return text, {**entry, "cached": False}
         raise RuntimeError("unreachable")
 

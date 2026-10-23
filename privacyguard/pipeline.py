@@ -3,7 +3,7 @@ GuardConfig differs between rows of the comparison."""
 from __future__ import annotations
 import re
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from privacyguard.configs import CONFIGS, GuardConfig
 from privacyguard.controls.access import AccessPolicy, PurposeBasedAccessFilter
@@ -30,6 +30,7 @@ class RAGResult:
     redacted_query: str | None = None
     query_sent: str = ""
     config: str = "none"
+    judge_inputs: list[str] = field(default_factory=list)
 
 
 def _provider_used(p: LLMProvider) -> str:
@@ -67,10 +68,10 @@ class ConfigurableRAG:
         ctx.chunks = self.retriever.search(retrieval_q, self.k) if retrieval_q else []
         if self.access:
             ctx = self.access.apply(ctx)                          # 2. clearance, department (+ purpose)
+        if c.redact_chunks:
+            ctx = self.pii.redact_chunks(ctx)                     # 1 again, before the judge: no raw PII leaves to it
         if self.injection:
             ctx = self.injection.apply(ctx)                       # 3. spotlight / heuristic / + judge
-        if c.redact_chunks:
-            ctx = self.pii.redact_chunks(ctx)                     # 1 again, on surviving chunks
         context = [ch.text for ch in ctx.chunks if not ch.dropped]
         answer = self.provider.answer(q, context)
         if self.output:
@@ -80,7 +81,7 @@ class ConfigurableRAG:
             for d in ctx.decisions:                               # 4. hash-chained audit
                 self.audit.append({"user": user.id, "purpose": purpose, "config": c.name, **d.to_dict()})
         return RAGResult(answer, ctx.chunks, context, ctx.decisions, (time.perf_counter() - t0) * 1000,
-                         _provider_used(self.provider), ctx.redacted_query, q, c.name)
+                         _provider_used(self.provider), ctx.redacted_query, q, c.name, list(ctx.judge_inputs))
 
 
 class BaselineRAG(ConfigurableRAG):

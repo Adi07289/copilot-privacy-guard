@@ -89,3 +89,4 @@ class GuardContext:
     chunks: list[Chunk] = field(default_factory=list)
     decisions: list[Decision] = field(default_factory=list)
     pii_map: dict[str, str] = field(default_factory=dict)
+    judge_inputs: list[str] = field(default_factory=list)   # texts sent to an external LLM judge

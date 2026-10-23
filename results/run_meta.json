@@ -24,9 +24,10 @@
  "groq_model": "qwen/qwen3.8-27b",
  "judge_model": "openai/gpt-oss-120b",
  "prompt_guard_model": "meta-llama/llama-prompt-guard-2-86m",
- "cache_entries": 401,
- "cache_hits": 1071,
- "cache_misses": 342,
+ "cache_entries": 407,
+ "cache_hits": 1407,
+ "cache_misses": 6,
+ "judge_call_ms_median": 552.9,
  "python": "3.13.2",
  "packages": {
   "scikit-learn": "1.9.1",
@@ -36,5 +37,5 @@
   "openai": "3.37.0",
   "faker": "40.43.0"
  },
- "runtime_s": 1041.5
+ "runtime_s": 72.1
 }

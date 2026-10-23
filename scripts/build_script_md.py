@@ -41,7 +41,7 @@ script = f"""# Presentation script — Final review
 
 **8 · Setup (40 s).** 80 synthetic Indian-enterprise documents with 369 labelled PII spans and 4 poisoned documents; 36 queries from five personas. Every defence is a configuration of the same pipeline — same corpus, retriever and LLM — so only the defence changes. Injection queries come from a persona *allowed* to read the poisoned document, so we test the injection control, not access control. Non-ours rows are simplified analogues, not reproductions.
 
-**9 · Headline results (60 s).** PII sent to the provider: {a('none','context_pii_exposure',0)} → {a('full','context_pii_exposure',0)}. Over-sharing: {a('none','oversharing_rate')} → {a('full','oversharing_rate',0)}. Raw PII in the index and poisoned chunks reaching the model: both to zero. The honest rows: answer-quality retention falls to {a('full','answer_quality_rouge_l')} ROUGE-L, and the judge costs about {lat/1000:.1f} s per query. The model itself obeyed almost no canaries — vanilla {a('none','injection_success_rate',0)} of {A['none']['injection_success_n']} — but that is model behaviour, not a control we own, so we design for zero exposure.
+**9 · Headline results (60 s).** PII sent to the provider: {a('none','context_pii_exposure',0)} → {a('full','context_pii_exposure',0)}. Over-sharing: {a('none','oversharing_rate')} → {a('full','oversharing_rate',0)}. Raw PII in the index and poisoned chunks reaching the model: both to zero. The honest rows: answer-quality retention falls to {a('full','answer_quality_rouge_l')} ROUGE-L, median added latency is +{lat:.0f} ms, and an uncached judge call takes about {(M.get('judge_call_ms_median') or 0):.0f} ms. The model itself obeyed almost no canaries — vanilla {a('none','injection_success_rate',0)} of {A['none']['injection_success_n']} — but that is model behaviour, not a control we own, so we design for zero exposure.
 
 **10 · Comparative study (75 s).** Read it by column. Copilot-style RBAC cuts over-sharing to {a('rbac','oversharing_rate')} but still sends {a('rbac','context_pii_exposure',0)} of PII to the provider and lets {a('rbac','injection_exposure_rate',0)} of poisoned chunks through. Redaction-only leaves over-sharing at {a('pii_only','oversharing_rate',0)}. Output filtering looks clean in the answer while the provider still receives {a('output_filter','context_pii_exposure',0)} — under DPDP §8(1) that is still the fiduciary's responsibility. Every single-family defence leaves an exposure open; ours closes all four.
 
@@ -55,7 +55,7 @@ script = f"""# Presentation script — Final review
 
 **15 · Unique factor (30 s).** Purpose-aware access as a DPDP rule; India-first PII measured against Presidio; a full pipeline measured against the alternatives with compliance evidence generated from results.
 
-**16 · Limitations (40 s).** Utility and latency cost; synthetic corpus with a held-out check (and two detector fixes after the first run, disclosed); static access tags; few positive injection successes because the model resists — exposure is the robust measure.
+**16 · Limitations (40 s).** Utility and latency cost; canaries appear verbatim in three payloads, so quoting would count as success; synthetic corpus with a held-out check (and two detector fixes after the first run, disclosed); static access tags; few positive injection successes because the model resists — exposure is the robust measure.
 
 **17 · Future work + thanks (20 s).** Judge-only decisions, re-identifying placeholders for authorised users, wider recognizers, output egress control, identity-provider integration. Thank you — happy to take questions or run the demo.
 
@@ -70,7 +70,7 @@ script = f"""# Presentation script — Final review
 - **Why not reproduce the papers?** Training-time defences (StruQ, SPARSE) need fine-tuning/GPUs. We compare defence *families* on identical data and say so on every slide; reported numbers are in Appendix B as context only.
 - **0% looks too good.** It is 0% on 36 queries; the held-out PII F1 ({pc(ho['ours']['f1'])}) shows the detector isn't perfect. Real text would leak some.
 - **Answer quality is low — is it usable?** {a('full','answer_quality_rouge_l')} ROUGE-L is the measured cost; much of it is names/contacts the guard deliberately removes. Future work re-identifies them for authorised users.
-- **What does the judge cost?** ~{(lat-lat_nj)/1000:.1f} s per query uncached; batching and caching reduce it.
+- **What does the judge cost?** median +{lat:.0f} ms per query with caches; each uncached judge call ≈ {(M.get('judge_call_ms_median') or 0):.0f} ms. Batching reduces it.
 - **Which DPDP sections?** §4 and §6(1) purpose limitation → access filter; §8(1) processors and §8(5) safeguards → redaction, redacted index, screening; §8(6) and Rules 6–7 → audit chain; §10(2)(c) and Rule 13 → DPIA + checklist.
 - **Why did the LLM resist the canaries?** Modern models are trained against obvious injections; we measured it and report it. The guard removes the payload so safety doesn't depend on it.
 - **Is the corpus real?** Synthetic, seeded and labelled — so every number reproduces. A held-out set written in different formats limits bias.

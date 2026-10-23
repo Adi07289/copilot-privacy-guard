@@ -35,3 +35,25 @@ def test_merge_without_llm_and_markdown(tmp_path):
     assert merged["aggregates"]["full"]["answer_quality_source"] == "extractive"
     md = to_markdown(merged)
     assert "Copilot Privacy Guard (ours)" in md and "simplified analogue" in md
+
+def test_injection_success_counts_only_injection_queries():
+    runs = [_row("none", "a", True, "groq"), {**_row("none", "u", True, "groq"), "kind": "utility"}]
+    agg = aggregate(runs, ["none"], {"none": 0.5})["none"]
+    assert agg["injection_success_n"] == 1                                   # I-1
+
+def test_added_latency_is_the_median_delta():
+    runs = [{**_row("none", q, None, "groq"), "latency_ms": 10.0} for q in "abc"] + \
+           [{**_row("x", "a", None, "groq"), "latency_ms": 20.0}, {**_row("x", "b", None, "groq"), "latency_ms": 30.0},
+            {**_row("x", "c", None, "groq"), "latency_ms": 20010.0}]          # one rate-limit outlier
+    assert aggregate(runs, ["none", "x"], {})["x"]["added_latency_ms"] == 20.0  # I-2
+
+def test_answer_quality_skips_fallback_pairs(tmp_path, monkeypatch):
+    from privacyguard.eval import harness as H
+    rows = [{**_row("none", "u", None, "groq"), "kind": "utility", "answer": "a b"},
+            {**_row("full", "u", None, "extractive"), "kind": "utility", "answer": "a b"}]
+    H._score_quality(rows)
+    assert "rouge_l" not in rows[1]                                             # I-5
+
+def test_leakage_label_names_its_source():
+    from privacyguard.eval.harness import METRICS
+    assert dict((k, l) for k, l, _ in METRICS)["pii_leakage_rate"].endswith("(extractive)")   # M-4

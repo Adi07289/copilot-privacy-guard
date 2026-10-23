@@ -93,6 +93,8 @@ def main() -> None:
                "judge_model": getattr(getattr(judge, "client", None), "model", None),
                "prompt_guard_model": getattr(pg_client, "model", None),
                "cache_entries": len(cache), "cache_hits": cache.hits, "cache_misses": cache.misses,
+               "judge_call_ms_median": (lambda xs: sorted(xs)[len(xs) // 2] if xs else None)(
+                   [v["latency_ms"] for v in cache._data.values() if v.get("model") == getattr(getattr(judge, "client", None), "model", None)]),
                "python": platform.python_version(),
                "packages": {p: _v(p) for p in ("scikit-learn", "spacy", "presidio-analyzer", "fastembed", "openai", "faker")},
                "runtime_s": round(time.time() - t0, 1)}, R / "run_meta.json")

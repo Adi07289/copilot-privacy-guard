@@ -635,7 +635,7 @@
     "EU AI Act Art. 12"
    ],
    "passed": true,
-   "evidence": "verify(): ok=True, entries=2542, broken_at=None"
+   "evidence": "verify(): ok=True, entries=2634, broken_at=None"
   },
   {
    "id": "A09",
@@ -653,7 +653,7 @@
     "GDPR Art. 30"
    ],
    "passed": true,
-   "evidence": "2542 entries, missing user/purpose: 0"
+   "evidence": "2634 entries, missing user/purpose: 0"
   },
   {
    "id": "A11",

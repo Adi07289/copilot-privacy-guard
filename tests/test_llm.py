@@ -125,3 +125,17 @@ def test_connection_errors_are_retried(tmp_path):
     api = FakeAPI(["ok"], errors=[APIConnectionError("dns blip"), APIConnectionError("dns blip")])
     c = GroqClient(None, "m", LLMCache(tmp_path / "c.json"), client=api, sleep=sleeps.append)
     assert c.chat("s", "u")[0] == "ok" and len(sleeps) == 2
+
+def test_retry_after_is_capped(tmp_path):
+    sleeps = []
+    api = FakeAPI(["ok"], errors=[HTTPErr(429, "3600")])
+    GroqClient(None, "m", LLMCache(tmp_path / "c.json"), client=api, sleep=sleeps.append).chat("s", "u")
+    assert sleeps == [30.0]                                                     # I-4
+
+def test_circuit_opens_after_repeated_exhaustion(tmp_path):
+    api = FakeAPI(errors=[HTTPErr(429)] * 50)
+    c = GroqClient(None, "m", LLMCache(tmp_path / "c.json"), client=api, max_retries=1, sleep=lambda s: None)
+    for i in range(5):
+        with pytest.raises(Exception):
+            c.chat("s", f"u{i}")
+    assert len(api.calls) == 3 * 2                                              # 3 exhausted calls, then the circuit is open

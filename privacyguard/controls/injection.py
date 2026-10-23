@@ -135,6 +135,8 @@ class InjectionScreener(Control):
                 ch.text = _wrap(ch.doc_id, ch.text)
                 ctx.decisions.append(Decision(self.name, "wrap", ch.doc_id, {"mode": "spotlight"}))
                 continue
+            if self.mode == "heuristic+judge" and not isinstance(self.judge, NullJudge):
+                ctx.judge_inputs.append(ch.text)                  # leaves the trust boundary: counted as provider exposure
             h, hits, j = self.score(ch.text)
             if self.mode == "heuristic":
                 judge_detail = "not_run (heuristic mode)"
