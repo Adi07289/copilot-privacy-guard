@@ -1,0 +1,388 @@
+{
+ "detectors": [
+  "ours",
+  "presidio_default",
+  "presidio_india"
+ ],
+ "presidio_version": "2.2.364",
+ "mapping": {
+  "PERSON": "PERSON",
+  "EMAIL_ADDRESS": "EMAIL",
+  "PHONE_NUMBER": "IN_MOBILE",
+  "CREDIT_CARD": "CREDIT_CARD",
+  "DATE_TIME": "DOB",
+  "IN_AADHAAR": "AADHAAR",
+  "IN_PAN": "PAN"
+ },
+ "types_without_presidio_recognizer": [
+  "IFSC",
+  "UPI_VPA",
+  "SALARY_INR"
+ ],
+ "results": {
+  "corpus": {
+   "ours": {
+    "precision": 0.9288,
+    "recall": 0.9892,
+    "f1": 0.958,
+    "tp": 365,
+    "fp": 28,
+    "fn": 4,
+    "per_type": {
+     "AADHAAR": {
+      "recall": 1.0,
+      "support": 20,
+      "fp": 0
+     },
+     "CREDIT_CARD": {
+      "recall": 1.0,
+      "support": 8,
+      "fp": 0
+     },
+     "DOB": {
+      "recall": 0.95,
+      "support": 20,
+      "fp": 0
+     },
+     "EMAIL": {
+      "recall": 1.0,
+      "support": 60,
+      "fp": 1
+     },
+     "IFSC": {
+      "recall": 0.95,
+      "support": 20,
+      "fp": 0
+     },
+     "IN_MOBILE": {
+      "recall": 1.0,
+      "support": 80,
+      "fp": 0
+     },
+     "PAN": {
+      "recall": 1.0,
+      "support": 31,
+      "fp": 0
+     },
+     "PERSON": {
+      "recall": 1.0,
+      "support": 90,
+      "fp": 27
+     },
+     "SALARY_INR": {
+      "recall": 1.0,
+      "support": 20,
+      "fp": 0
+     },
+     "UPI_VPA": {
+      "recall": 0.9,
+      "support": 20,
+      "fp": 0
+     }
+    }
+   },
+   "presidio_default": {
+    "precision": 0.6496,
+    "recall": 0.6179,
+    "f1": 0.6333,
+    "tp": 228,
+    "fp": 123,
+    "fn": 141,
+    "per_type": {
+     "AADHAAR": {
+      "recall": 0.0,
+      "support": 20,
+      "fp": 0
+     },
+     "CREDIT_CARD": {
+      "recall": 1.0,
+      "support": 8,
+      "fp": 0
+     },
+     "DOB": {
+      "recall": 1.0,
+      "support": 20,
+      "fp": 94
+     },
+     "EMAIL": {
+      "recall": 1.0,
+      "support": 60,
+      "fp": 0
+     },
+     "IFSC": {
+      "recall": 0.0,
+      "support": 20,
+      "fp": 0
+     },
+     "IN_MOBILE": {
+      "recall": 1.0,
+      "support": 80,
+      "fp": 2
+     },
+     "PAN": {
+      "recall": 0.0,
+      "support": 31,
+      "fp": 0
+     },
+     "PERSON": {
+      "recall": 0.6667,
+      "support": 90,
+      "fp": 27
+     },
+     "SALARY_INR": {
+      "recall": 0.0,
+      "support": 20,
+      "fp": 0
+     },
+     "UPI_VPA": {
+      "recall": 0.0,
+      "support": 20,
+      "fp": 0
+     }
+    }
+   },
+   "presidio_india": {
+    "precision": 0.5345,
+    "recall": 0.7561,
+    "f1": 0.6263,
+    "tp": 279,
+    "fp": 243,
+    "fn": 90,
+    "per_type": {
+     "AADHAAR": {
+      "recall": 1.0,
+      "support": 20,
+      "fp": 0
+     },
+     "CREDIT_CARD": {
+      "recall": 1.0,
+      "support": 8,
+      "fp": 0
+     },
+     "DOB": {
+      "recall": 1.0,
+      "support": 20,
+      "fp": 94
+     },
+     "EMAIL": {
+      "recall": 1.0,
+      "support": 60,
+      "fp": 0
+     },
+     "IFSC": {
+      "recall": 0.0,
+      "support": 20,
+      "fp": 0
+     },
+     "IN_MOBILE": {
+      "recall": 1.0,
+      "support": 80,
+      "fp": 2
+     },
+     "PAN": {
+      "recall": 1.0,
+      "support": 31,
+      "fp": 120
+     },
+     "PERSON": {
+      "recall": 0.6667,
+      "support": 90,
+      "fp": 27
+     },
+     "SALARY_INR": {
+      "recall": 0.0,
+      "support": 20,
+      "fp": 0
+     },
+     "UPI_VPA": {
+      "recall": 0.0,
+      "support": 20,
+      "fp": 0
+     }
+    }
+   }
+  },
+  "heldout": {
+   "ours": {
+    "precision": 0.9375,
+    "recall": 0.8571,
+    "f1": 0.8955,
+    "tp": 30,
+    "fp": 2,
+    "fn": 5,
+    "per_type": {
+     "AADHAAR": {
+      "recall": 1.0,
+      "support": 3,
+      "fp": 0
+     },
+     "CREDIT_CARD": {
+      "recall": 1.0,
+      "support": 2,
+      "fp": 0
+     },
+     "DOB": {
+      "recall": 0.6667,
+      "support": 3,
+      "fp": 0
+     },
+     "EMAIL": {
+      "recall": 1.0,
+      "support": 2,
+      "fp": 0
+     },
+     "IFSC": {
+      "recall": 1.0,
+      "support": 2,
+      "fp": 0
+     },
+     "IN_MOBILE": {
+      "recall": 0.8,
+      "support": 5,
+      "fp": 0
+     },
+     "PAN": {
+      "recall": 0.6667,
+      "support": 3,
+      "fp": 0
+     },
+     "PERSON": {
+      "recall": 0.875,
+      "support": 8,
+      "fp": 2
+     },
+     "SALARY_INR": {
+      "recall": 0.75,
+      "support": 4,
+      "fp": 0
+     },
+     "UPI_VPA": {
+      "recall": 1.0,
+      "support": 3,
+      "fp": 0
+     }
+    }
+   },
+   "presidio_default": {
+    "precision": 0.5429,
+    "recall": 0.5429,
+    "f1": 0.5429,
+    "tp": 19,
+    "fp": 16,
+    "fn": 16,
+    "per_type": {
+     "AADHAAR": {
+      "recall": 0.0,
+      "support": 3,
+      "fp": 0
+     },
+     "CREDIT_CARD": {
+      "recall": 1.0,
+      "support": 2,
+      "fp": 0
+     },
+     "DOB": {
+      "recall": 1.0,
+      "support": 3,
+      "fp": 12
+     },
+     "EMAIL": {
+      "recall": 1.0,
+      "support": 2,
+      "fp": 0
+     },
+     "IFSC": {
+      "recall": 0.0,
+      "support": 2,
+      "fp": 0
+     },
+     "IN_MOBILE": {
+      "recall": 1.0,
+      "support": 5,
+      "fp": 2
+     },
+     "PAN": {
+      "recall": 0.0,
+      "support": 3,
+      "fp": 0
+     },
+     "PERSON": {
+      "recall": 0.875,
+      "support": 8,
+      "fp": 2
+     },
+     "SALARY_INR": {
+      "recall": 0.0,
+      "support": 4,
+      "fp": 0
+     },
+     "UPI_VPA": {
+      "recall": 0.0,
+      "support": 3,
+      "fp": 0
+     }
+    }
+   },
+   "presidio_india": {
+    "precision": 0.5814,
+    "recall": 0.7143,
+    "f1": 0.641,
+    "tp": 25,
+    "fp": 18,
+    "fn": 10,
+    "per_type": {
+     "AADHAAR": {
+      "recall": 1.0,
+      "support": 3,
+      "fp": 0
+     },
+     "CREDIT_CARD": {
+      "recall": 1.0,
+      "support": 2,
+      "fp": 0
+     },
+     "DOB": {
+      "recall": 1.0,
+      "support": 3,
+      "fp": 12
+     },
+     "EMAIL": {
+      "recall": 1.0,
+      "support": 2,
+      "fp": 0
+     },
+     "IFSC": {
+      "recall": 0.0,
+      "support": 2,
+      "fp": 0
+     },
+     "IN_MOBILE": {
+      "recall": 1.0,
+      "support": 5,
+      "fp": 2
+     },
+     "PAN": {
+      "recall": 1.0,
+      "support": 3,
+      "fp": 2
+     },
+     "PERSON": {
+      "recall": 0.875,
+      "support": 8,
+      "fp": 2
+     },
+     "SALARY_INR": {
+      "recall": 0.0,
+      "support": 4,
+      "fp": 0
+     },
+     "UPI_VPA": {
+      "recall": 0.0,
+      "support": 3,
+      "fp": 0
+     }
+    }
+   }
+  }
+ }
+}
